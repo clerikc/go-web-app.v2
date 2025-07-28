@@ -23,4 +23,8 @@ COPY --from=builder /app/webapp .
 COPY --from=builder /app/static ./static
 
 EXPOSE 8080
+RUN ls -la /app/static/ && \
+    echo "Проверка статических файлов:" && \
+    [ -f /app/static/image.jpg ] && echo "Изображение найдено" || echo "Изображение отсутствует" && \
+    [ -f /app/static/styles.css ] && echo "CSS найден" || echo "CSS отсутствует"
 CMD ["./webapp"]
