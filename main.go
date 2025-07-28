@@ -10,8 +10,8 @@ import (
 
 func main() {
 	// Serve static files
-	http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	// Routes
 	http.HandleFunc("/", homeHandler)
@@ -38,10 +38,13 @@ func main() {
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	podName := os.Getenv("HOSTNAME")
 
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
 	html := fmt.Sprintf(`
 	<!DOCTYPE html>
 	<html>
 	<head>
+		<meta charset="UTF-8">
 		<title>Go Web App v2</title>
 		<link rel="stylesheet" href="/static/styles.css">
 	</head>
@@ -51,7 +54,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 			<a href="/bye" class="button red">Пока</a>
 			<a href="/refresh" class="button blue">Опять</a>
 		</div>
-		<img src="/static/image.jpg" alt="Example Image">
+		<img src="/static/image.jpg" alt="Example Image" class="main-image">
 		<div class="pod-info">
 			<div>Pod: %s</div>
 			<div>Version: 2.0</div>
@@ -60,15 +63,17 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	</html>
 	`, podName)
 
-	w.Header().Set("Content-Type", "text/html")
 	w.Write([]byte(html))
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
 	html := `
 	<!DOCTYPE html>
 	<html>
 	<head>
+		<meta charset="UTF-8">
 		<title>Привет v2</title>
 		<style>
 			body {
@@ -96,10 +101,13 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func byeHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
 	html := `
 	<!DOCTYPE html>
 	<html>
 	<head>
+		<meta charset="UTF-8">
 		<title>Пока v2</title>
 		<style>
 			body {
