@@ -3,23 +3,22 @@ FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
-# Копируем сначала только файлы модуля
-COPY go.mod go.sum ./
+# 1. Сначала копируем ТОЛЬКО go.mod
+COPY go.mod .
 
-# Скачиваем зависимости
+# 2. Скачиваем зависимости (работает без go.sum)
 RUN go mod download
 
-# Копируем весь остальной код
+# 3. Копируем остальные файлы проекта
 COPY . .
 
-# Собираем приложение
+# 4. Собираем приложение
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o webapp .
 
 # Runtime stage
 FROM alpine:3.18
 WORKDIR /app
 
-# Копируем бинарник и статические файлы
 COPY --from=builder /app/webapp .
 COPY --from=builder /app/static ./static
 
