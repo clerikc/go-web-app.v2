@@ -52,10 +52,26 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Install kubectl
-      uses: azure/setup-kubectl@v3
+    # Добавленные шаги для SSH
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan ${{ secrets.VM_IP }} >> ~/.ssh/known_hosts
     
+    - name: Deploy to VM
+      run: |
+        scp -r ./k8s ${{ secrets.VM_USER }}@${{ secrets.VM_IP }}:/tmp/
+        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_IP }} "
+          kubectl apply -f /tmp/k8s/deployment.yaml
+          kubectl apply -f /tmp/k8s/service.yaml
+          kubectl rollout status deployment/webapp-v2-deployment
+        "
+    
+    # Оригинальный шаг (оставьте как резервный вариант)
     - name: Deploy to Minikube
+      if: false # Отключаем этот шаг, если используем SSH
       run: |
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
