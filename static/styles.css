@@ -6,33 +6,54 @@ body {
     flex-direction: column;
     align-items: center;
     padding-top: 50px;
-    background-color: #f5f5f5;
-    position: relative; /* Для позиционирования pod-info */
+    position: relative;
+    min-height: 100vh;
+    background-color: rgba(245, 245, 245, 0.8); /* Полупрозрачный фон для читаемости */
 }
 
-/* Стили для изображения */
+/* Полноэкранное изображение как фон */
 .main-image,
 img {
-    width: 600px;
-    height: auto;
-    max-width: 90%;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    margin: 20px 0;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    display: block; /* Убираем лишнее пространство под изображением */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    object-position: center;
+    z-index: -1; /* Помещаем под контент */
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
 }
 
-/* Стили для контейнера кнопок */
+/* Затемнение фона для лучшей читаемости */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Затемнение */
+    z-index: -1; /* Между фоном и контентом */
+}
+
+/* Контейнер кнопок с полупрозрачным фоном */
 .buttons {
     margin: 30px 0;
     display: flex;
     gap: 15px;
     justify-content: center;
-    flex-wrap: wrap; /* Для адаптивности */
+    flex-wrap: wrap;
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* Базовые стили кнопок */
+/* Стили кнопок остаются без изменений */
 .button {
     display: inline-block;
     padding: 12px 24px;
@@ -49,33 +70,45 @@ img {
     text-align: center;
 }
 
-/* Эффекты при наведении */
 .button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Цвета кнопок */
-.green {
-    background-color: #4CAF50; /* Более мягкий зеленый */
-}
-.red {
-    background-color: #f44336; /* Яркий красный */
-}
-.blue {
-    background-color: #2196F3; /* Чистый синий */
-}
+.green { background-color: #4CAF50; }
+.red { background-color: #f44336; }
+.blue { background-color: #2196F3; }
 
-/* Стили для блока с информацией о поде */
+/* Информация о поде с улучшенной читаемостью */
 .pod-info {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 20px;
     font-size: 14px;
-    color: #666;
-    background-color: #eee;
-    padding: 8px 12px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 10; /* Чтобы был поверх других элементов */
+    color: #333;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    backdrop-filter: blur(2px);
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+    body {
+        padding-top: 30px;
+    }
+    
+    .buttons {
+        flex-direction: column;
+        width: 85%;
+        margin: 15px 0;
+        gap: 10px;
+    }
+    
+    .pod-info {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
 }
