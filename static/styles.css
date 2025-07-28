@@ -44,11 +44,13 @@ body {
 }
 
 img {
-    max-width: 600px;
-    max-height: 600px;
-    margin-top: 20px;
+     width: 600px;       /* Фиксированная ширина */
+    height: auto;       /* Сохраняем пропорции */
+    max-width: 90%;     /* Не шире 90% экрана */
+    border: 2px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .pod-info {
