@@ -93,7 +93,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		</style>
 	</head>
 	<body>
-		<h1>Привет от версии 2!</h1>
+		<h1>Привет!</h1>
 	</body>
 	</html>
 	`
@@ -123,7 +123,7 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
 		</style>
 	</head>
 	<body>
-		<h1>Пока! (но кнопка теперь работает)</h1>
+		<h1>Пока!</h1>
 	</body>
 	</html>
 	`
