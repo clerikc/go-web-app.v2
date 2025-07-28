@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: webapp-v2
-        image: clerikc/go-web-app.v2:latest
+        image: webapp-local
         imagePullPolicy: Never
         ports:
         - containerPort: 8080
