@@ -58,8 +58,3 @@ spec:
           requests:
             memory: "128Mi"
             cpu: "250m"
-      volumes:
-      - name: static-files
-        hostPath:
-          path: /home/clerikc/go-web-app.v2/static
-          type: Directory
