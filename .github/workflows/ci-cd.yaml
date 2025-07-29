@@ -47,6 +47,8 @@ jobs:
         context: .
         push: true
         tags: ghcr.io/clerikc/go-web-app.v2:latest  # Используем actor
+        labels: |
+            org.opencontainers.image.source=https://github.com/clerikc/go-web-app.v2
 
   deploy:
     needs: docker
