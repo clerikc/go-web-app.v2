@@ -38,7 +38,7 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.PAT_TOKEN }}
     
     # Сборка и загрузка в GHCR с правильным именем репозитория
     - name: Build and push
