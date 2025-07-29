@@ -21,8 +21,6 @@ spec:
       annotations:
         version: "2.0"
     spec:
-    template:
-    spec:
       imagePullSecrets:
       - name: ghcr-secret 
       containers:
