@@ -32,7 +32,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    # Авторизация в GHCR
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v2
       with:
@@ -40,15 +39,14 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.PAT_TOKEN }}
     
-    # Сборка и загрузка в GHCR с правильным именем репозитория
     - name: Build and push
       uses: docker/build-push-action@v4
       with:
         context: .
         push: true
-        tags: ghcr.io/clerikc/go-web-app.v2:latest  # Используем actor
+        tags: ghcr.io/clerikc/go-web-app.v2:latest
         labels: |
-            org.opencontainers.image.source=https://github.com/clerikc/go-web-app.v2
+          org.opencontainers.image.source=https://github.com/clerikc/go-web-app.v2
 
   deploy:
     needs: docker
@@ -63,6 +61,22 @@ jobs:
         chmod 600 ~/.ssh/id_ed25519
         ssh-keyscan ${{ secrets.VM_IP }} >> ~/.ssh/known_hosts
     
+    - name: Sync static files
+      run: |
+        # Создаем временный архив
+        tar -czf static.tar.gz ./static/*
+        
+        # Копируем архив на VM
+        scp static.tar.gz ${{ secrets.VM_USER }}@${{ secrets.VM_IP }}:~/go-web-app.v2/
+        
+        # Распаковываем и заменяем файлы
+        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_IP }} "
+          cd ~/go-web-app.v2/
+          tar -xzf static.tar.gz --overwrite
+          rm static.tar.gz
+          chmod -R 755 static/
+        "
+    
     - name: Deploy to VM
       run: |
         scp -r ./k8s ${{ secrets.VM_USER }}@${{ secrets.VM_IP }}:/tmp/
@@ -70,4 +84,13 @@ jobs:
           kubectl apply -f /tmp/k8s/deployment.yaml
           kubectl apply -f /tmp/k8s/service.yaml
           kubectl rollout status deployment/webapp-v2-deployment
+        "
+    
+    - name: Verify deployment
+      run: |
+        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_IP }} "
+          echo 'Static files:'
+          ls -la ~/go-web-app.v2/static/
+          echo 'Pods:'
+          kubectl get pods
         "
