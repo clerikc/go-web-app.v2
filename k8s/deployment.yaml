@@ -22,7 +22,7 @@ spec:
         version: "2.0"
     spec:
       imagePullSecrets:
-      - name: ghcr-secret
+      - name: ghcr-secret 
       containers:
       - name: webapp-v2
         image: ghcr.io/clerikc/go-web-app.v2:latest
@@ -32,9 +32,6 @@ spec:
         env:
         - name: PORT
           value: "8080"
-        volumeMounts:
-        - name: static-files
-          mountPath: /app/static
         livenessProbe:
           httpGet:
             path: /health
@@ -58,8 +55,3 @@ spec:
           requests:
             memory: "128Mi"
             cpu: "250m"
-      volumes:  # ← Добавленная секция
-      - name: static-files
-        hostPath:
-          path: /static
-          type: Directory
