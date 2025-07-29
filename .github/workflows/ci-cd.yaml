@@ -46,9 +46,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: |
-          ghcr.io/${{ github.repository_owner }}/go-web-app.v2:latest
-          ghcr.io/${{ github.repository_owner }}/go-web-app.v2:${{ github.sha }}
+        tags: ghcr.io/${{ github.actor }}/go-web-app.v2:latest  # Используем actor
 
   deploy:
     needs: docker
