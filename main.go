@@ -93,7 +93,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		</style>
 	</head>
 	<body>
-		<h1>Привет!</h1>
+		<h1>Привет!!</h1>
 	</body>
 	</html>
 	`
