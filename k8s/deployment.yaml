@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: webapp-v2
-        image: ghcr.io/your-github-username/go-web-app.v2:latest
+        image: ghcr.io/clerikc/go-web-app.v2:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
