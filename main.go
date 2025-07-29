@@ -109,7 +109,7 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
 	<html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Пока v2</title>
+		<title>Пока! v2</title>
 		<link rel="stylesheet" href="/static/styles.css">
 	</head>
 	<body>
