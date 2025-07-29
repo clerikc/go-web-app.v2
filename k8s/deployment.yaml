@@ -58,3 +58,8 @@ spec:
           requests:
             memory: "128Mi"
             cpu: "250m"
+      volumes:  # ← Добавленная секция
+      - name: static-files
+        hostPath:
+          path: /static
+          type: Directory
