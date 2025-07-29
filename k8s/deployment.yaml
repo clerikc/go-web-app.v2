@@ -21,6 +21,10 @@ spec:
       annotations:
         version: "2.0"
     spec:
+    template:
+    spec:
+      imagePullSecrets:
+      - name: ghcr-secret 
       containers:
       - name: webapp-v2
         image: ghcr.io/clerikc/go-web-app.v2:latest
