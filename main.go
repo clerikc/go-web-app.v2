@@ -92,7 +92,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		%s
 		<div class="buttons">
 			<a href="/hello?showlink=true" class="button green">Показать ссылку</a>
-			<a href="/hello?goback=true" class="button blue">Вернуться</a>
+			<a href="/hello?goback=true" class="button blue">Вернуться!</a>
 		</div>
 	</body>
 	</html>
