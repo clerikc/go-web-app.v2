@@ -79,12 +79,15 @@ jobs:
     
     - name: Deploy to VM
       run: |
-        scp -r ./k8s ${{ secrets.VM_USER }}@${{ secrets.VM_IP }}:/tmp/
-        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_IP }} "
-          kubectl apply -f /tmp/k8s/deployment.yaml
-          kubectl apply -f /tmp/k8s/service.yaml
-          kubectl rollout status deployment/webapp-v2-deployment
-        "
+         # Копируем файлы в правильную папку
+         ssh clerikc@${{ secrets.VM_IP }} "mkdir -p /home/clerikc/go-web-app.v2/static"
+         scp -r ./static/* clerikc@${{ secrets.VM_IP }}:/home/clerikc/go-web-app.v2/static/
+         # Применяем конфигурацию
+         scp ./k8s/*.yaml clerikc@${{ secrets.VM_IP }}:/tmp/
+         ssh clerikc@${{ secrets.VM_IP }} "
+         kubectl apply -f /tmp/deployment.yaml
+         kubectl rollout restart deployment/webapp-v2-deployment
+         "
     
     - name: Verify deployment
       run: |

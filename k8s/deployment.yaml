@@ -61,5 +61,5 @@ spec:
       volumes:
       - name: static-files
         hostPath:
-          path: /home/ubuntu/go-web-app.v2/static
+          path: /home/clerikc/go-web-app.v2/static
           type: Directory
