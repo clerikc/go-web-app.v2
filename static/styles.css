@@ -8,12 +8,11 @@ body {
     padding-top: 50px;
     position: relative;
     min-height: 100vh;
-    background-color: rgba(245, 245, 245, 0.8); /* Полупрозрачный фон для читаемости */
+    background-color: rgba(245, 245, 245, 0.8);
 }
 
-/* Полноэкранное изображение как фон */
-.main-image,
-img {
+/* Основное фоновое изображение (для главной страницы) */
+.main-image {
     position: fixed;
     top: 0;
     left: 0;
@@ -21,14 +20,30 @@ img {
     height: 100vh;
     object-fit: cover;
     object-position: center;
-    z-index: -1; /* Помещаем под контент */
+    z-index: -2; /* Ниже контента и затемнения */
     margin: 0;
     border: none;
     border-radius: 0;
     box-shadow: none;
 }
 
-/* Затемнение фона для лучшей читаемости */
+/* Второе фоновое изображение (для страницы /hello) */
+.secondary-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    object-position: center;
+    z-index: -2; /* Ниже контента и затемнения */
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Затемнение фона */
 body::after {
     content: "";
     position: fixed;
@@ -36,11 +51,10 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3); /* Затемнение */
+    background: rgba(0, 0, 0, 0.3);
     z-index: -1; /* Между фоном и контентом */
 }
 
-/* Контейнер кнопок с полупрозрачным фоном */
 .buttons {
     margin: 30px 0;
     display: flex;
@@ -53,7 +67,6 @@ body::after {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* Стили кнопок остаются без изменений */
 .button {
     display: inline-block;
     padding: 12px 24px;
@@ -79,7 +92,6 @@ body::after {
 .red { background-color: #f44336; }
 .blue { background-color: #2196F3; }
 
-/* Информация о поде с улучшенной читаемостью */
 .pod-info {
     position: fixed;
     top: 20px;
@@ -92,6 +104,46 @@ body::after {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 10;
     backdrop-filter: blur(2px);
+}
+
+/* Стили для сообщений */
+.message {
+    color: #4CAF50;
+    font-size: 16px;
+    margin: 20px 0;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.link-message {
+    color: #4CAF50;
+    font-size: 16px;
+    margin: 20px 0;
+    text-align: center;
+    animation: fadeOut 10s forwards;
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.github-link {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Специфичные стили для страницы /bye */
+.bye-page {
+    background-color: rgba(37, 0, 0, 0.7);
+    color: #ffaaaa;
 }
 
 /* Адаптация для мобильных устройств */
@@ -110,5 +162,10 @@ body::after {
     .pod-info {
         font-size: 12px;
         padding: 8px 12px;
+    }
+    
+    .message, .link-message {
+        width: 85%;
+        margin: 15px auto;
     }
 }

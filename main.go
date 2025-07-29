@@ -37,6 +37,7 @@ func main() {
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	podName := os.Getenv("HOSTNAME")
+	message := r.URL.Query().Get("message")
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
@@ -49,6 +50,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		<link rel="stylesheet" href="/static/styles.css">
 	</head>
 	<body>
+		%s
 		<div class="buttons">
 			<a href="/hello" class="button green">Привет</a>
 			<a href="/bye" class="button red">Пока</a>
@@ -61,7 +63,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		</div>
 	</body>
 	</html>
-	`, podName)
+	`, getMessageHTML(message), podName)
 
 	w.Write([]byte(html))
 }
@@ -69,34 +71,33 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	html := `
+	showLink := r.URL.Query().Get("showlink") == "true"
+	goBack := r.URL.Query().Get("goback") == "true"
+
+	if goBack {
+		http.Redirect(w, r, "/?message=Пока пока=)))", http.StatusFound)
+		return
+	}
+
+	html := fmt.Sprintf(`
 	<!DOCTYPE html>
 	<html>
 	<head>
 		<meta charset="UTF-8">
 		<title>Привет v2</title>
-		<style>
-			body {
-				background-color: #121212;
-				color: #ffffff;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100vh;
-				margin: 0;
-				font-size: 24px;
-				font-family: Arial, sans-serif;
-			}
-			h1 {
-				text-shadow: 0 0 10px rgba(0,255,0,0.7);
-			}
-		</style>
+		<link rel="stylesheet" href="/static/styles.css">
 	</head>
 	<body>
-		<h1>Привет!!</h1>
+		<img src="/static/image2.jpg" alt="Special Image" class="main-image">
+		%s
+		<div class="buttons">
+			<a href="/hello?showlink=true" class="button green">Показать ссылку</a>
+			<a href="/hello?goback=true" class="button blue">Вернуться</a>
+		</div>
 	</body>
 	</html>
-	`
+	`, getLinkHTML(showLink))
+
 	w.Write([]byte(html))
 }
 
@@ -109,18 +110,7 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
 	<head>
 		<meta charset="UTF-8">
 		<title>Пока v2</title>
-		<style>
-			body {
-				background-color: #250000;
-				color: #ffaaaa;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100vh;
-				margin: 0;
-				font-size: 24px;
-			}
-		</style>
+		<link rel="stylesheet" href="/static/styles.css">
 	</head>
 	<body>
 		<h1>Пока!</h1>
@@ -132,4 +122,25 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
 
 func refreshHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func getMessageHTML(message string) string {
+	if message == "" {
+		return ""
+	}
+	return fmt.Sprintf(`<div class="message">%s</div>`, message)
+}
+
+func getLinkHTML(show bool) string {
+	if !show {
+		return ""
+	}
+	return `
+	<div class="link-message">
+		Проект на GitHub: 
+		<a href="https://github.com/clerikc/go-web-app.v2" class="github-link">
+			github.com/clerikc/go-web-app.v2
+		</a>
+	</div>
+	`
 }
