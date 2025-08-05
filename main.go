@@ -187,15 +187,16 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
                         leftRect.style.left = '0';
                         leftRect.style.top = (i * (window.innerHeight / rectCount)) + 'px';
                         container.appendChild(leftRect);
-                        rects.push(leftRect);
+                        rects.push({element: leftRect, isRight: false});
                         
                         // Правые прямоугольники
                         var rightRect = document.createElement('div');
                         rightRect.className = 'bye-rectangle';
                         rightRect.style.right = '0';
+                        rightRect.style.left = 'auto';
                         rightRect.style.top = (i * (window.innerHeight / rectCount)) + 'px';
                         container.appendChild(rightRect);
-                        rects.push(rightRect);
+                        rects.push({element: rightRect, isRight: true});
                     }
                 }
                 
@@ -209,18 +210,28 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
                         var progress = Math.min(elapsed / duration, 1);
                         
                         rects.forEach(function(rect, index) {
-                            var rectX = parseInt(rect.style.left || 
-                                        (window.innerWidth - parseInt(rect.style.right) - 30));
-                            var targetX = centerX - 15;
-                            var newX = rectX + (targetX - rectX) * progress;
-                            
-                            rect.style.left = newX + 'px';
-                            rect.style.right = 'auto';
+                            var rectEl = rect.element;
+                            if (rect.isRight) {
+                                // Для правых прямоугольников
+                                var currentRight = parseInt(rectEl.style.right || 0);
+                                var currentX = window.innerWidth - currentRight - 30;
+                                var targetX = centerX - 15;
+                                var newX = currentX + (targetX - currentX) * progress;
+                                rectEl.style.right = (window.innerWidth - newX - 30) + 'px';
+                                rectEl.style.left = 'auto';
+                            } else {
+                                // Для левых прямоугольников
+                                var currentX = parseInt(rectEl.style.left || 0);
+                                var targetX = centerX - 15;
+                                var newX = currentX + (targetX - currentX) * progress;
+                                rectEl.style.left = newX + 'px';
+                                rectEl.style.right = 'auto';
+                            }
                             
                             // Волновой эффект
                             var delay = index * 50;
                             if (elapsed >= delay) {
-                                rect.style.opacity = 0.8 - (0.7 * ((elapsed - delay) / (duration - delay)));
+                                rectEl.style.opacity = 0.8 - (0.7 * ((elapsed - delay) / (duration - delay)));
                             }
                         });
                         
@@ -243,18 +254,28 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
                         var progress = Math.min(elapsed / duration, 1);
                         
                         rects.forEach(function(rect, index) {
-                            var currentX = parseInt(rect.style.left);
-                            var targetX = currentX < window.innerWidth / 2 ? 
-                                        window.innerWidth : 
-                                        -30;
-                            var newX = currentX + (targetX - currentX) * progress;
-                            
-                            rect.style.left = newX + 'px';
+                            var rectEl = rect.element;
+                            if (rect.isRight) {
+                                // Для правых прямоугольников
+                                var currentRight = parseInt(rectEl.style.right || 0);
+                                var currentX = window.innerWidth - currentRight - 30;
+                                var targetX = -30;
+                                var newX = currentX + (targetX - currentX) * progress;
+                                rectEl.style.right = (window.innerWidth - newX - 30) + 'px';
+                                rectEl.style.left = 'auto';
+                            } else {
+                                // Для левых прямоугольников
+                                var currentX = parseInt(rectEl.style.left || 0);
+                                var targetX = window.innerWidth;
+                                var newX = currentX + (targetX - currentX) * progress;
+                                rectEl.style.left = newX + 'px';
+                                rectEl.style.right = 'auto';
+                            }
                             
                             // Возвращаем прозрачность
                             var delay = index * 50;
                             if (elapsed >= delay) {
-                                rect.style.opacity = 0.1 + (0.7 * ((elapsed - delay) / (duration - delay)));
+                                rectEl.style.opacity = 0.1 + (0.7 * ((elapsed - delay) / (duration - delay)));
                             }
                         });
                         
@@ -271,15 +292,16 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
                 
                 function resetRectangles() {
                     rects.forEach(function(rect, index) {
-                        if (index % 2 === 0) {
-                            rect.style.left = '0';
-                            rect.style.right = 'auto';
+                        var rectEl = rect.element;
+                        if (rect.isRight) {
+                            rectEl.style.right = '0';
+                            rectEl.style.left = 'auto';
                         } else {
-                            rect.style.right = '0';
-                            rect.style.left = 'auto';
+                            rectEl.style.left = '0';
+                            rectEl.style.right = 'auto';
                         }
-                        rect.style.top = (Math.floor(index/2) * (window.innerHeight / rectCount)) + 'px';
-                        rect.style.opacity = '0.8';
+                        rectEl.style.top = (Math.floor(index/2) * (window.innerHeight / rectCount)) + 'px';
+                        rectEl.style.opacity = '0.8';
                     });
                 }
                 
