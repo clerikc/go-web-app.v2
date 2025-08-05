@@ -35,7 +35,12 @@ func main() {
 	log.Fatal(server.ListenAndServe())
 }
 
-// Добавленная функция getMessageHTML
+// Добавляем недостающую функцию refreshHandler
+func refreshHandler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+// Добавляем недостающую функцию getMessageHTML
 func getMessageHTML(message string) string {
 	if message == "" {
 		return ""
@@ -43,7 +48,7 @@ func getMessageHTML(message string) string {
 	return fmt.Sprintf(`<div class="message">%s</div>`, message)
 }
 
-// Добавленная функция getLinkHTML
+// Добавляем недостающую функцию getLinkHTML
 func getLinkHTML(show bool) string {
 	if !show {
 		return ""
@@ -91,7 +96,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	goBack := r.URL.Query().Get("goback") == "true"
 
 	if goBack {
-		http.Redirect(w, r, "/?message=Пока+пока", http.StatusFound)
+		http.Redirect(w, r, "/?message=Пока+пока", http.StatusSeeOther)
 		return
 	}
 
@@ -291,9 +296,4 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
     </html>
     `
 	w.Write([]byte(html))
-}
-
-// Добавленная функция refreshHandler
-func refreshHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/", http.StatusFound)
 }
