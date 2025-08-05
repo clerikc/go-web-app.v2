@@ -77,42 +77,45 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 				text-decoration: none;
 				font-size: 1.5em;
 				font-weight: bold;
-				border-radius: 5px;
 				transition: all 0.3s ease;
-				box-shadow: none;
-				border: none;
-				outline: none;
+				background: transparent !important;
+				border: none !important;
 			}
 			.neon-link:hover {
-				text-shadow: 0 0 5px, 0 0 10px, 0 0 15px;
+				text-shadow: 0 0 8px;
 			}
 			.green-neon {
-				color: #00ff00;
-				text-shadow: 0 0 5px #00ff00;
+				color: #0f0;
+				text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
 			}
 			.green-neon:hover {
-				color: #00ff00;
-				text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+				color: #0f0;
+				text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5);
 			}
 			.red-neon {
-				color: #ff0000;
-				text-shadow: 0 0 5px #ff0000;
+				color: #f33;
+				text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
 			}
 			.red-neon:hover {
-				color: #ff0000;
-				text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+				color: #f33;
+				text-shadow: 0 0 10px rgba(255, 0, 0, 0.7), 0 0 20px rgba(255, 0, 0, 0.5);
 			}
 			.blue-neon {
-				color: #00bfff;
-				text-shadow: 0 0 5px #00bfff;
+				color: #0af;
+				text-shadow: 0 0 5px rgba(0, 170, 255, 0.3);
 			}
 			.blue-neon:hover {
-				color: #00bfff;
-				text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+				color: #0af;
+				text-shadow: 0 0 10px rgba(0, 170, 255, 0.7), 0 0 20px rgba(0, 170, 255, 0.5);
 			}
 			.buttons {
 				margin: 30px 0;
 				text-align: center;
+				background: transparent !important;
+			}
+			body {
+				background-color: #111;
+				color: #fff;
 			}
 		</style>
 	</head>
