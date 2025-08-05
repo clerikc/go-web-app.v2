@@ -69,13 +69,59 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		<meta charset="UTF-8">
 		<title>Go Web App v2</title>
 		<link rel="stylesheet" href="/static/styles.css">
+		<style>
+			.neon-link {
+				display: inline-block;
+				margin: 0 15px;
+				padding: 10px 20px;
+				text-decoration: none;
+				font-size: 1.5em;
+				font-weight: bold;
+				border-radius: 5px;
+				transition: all 0.3s ease;
+				box-shadow: none;
+				border: none;
+				outline: none;
+			}
+			.neon-link:hover {
+				text-shadow: 0 0 5px, 0 0 10px, 0 0 15px;
+			}
+			.green-neon {
+				color: #00ff00;
+				text-shadow: 0 0 5px #00ff00;
+			}
+			.green-neon:hover {
+				color: #00ff00;
+				text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+			}
+			.red-neon {
+				color: #ff0000;
+				text-shadow: 0 0 5px #ff0000;
+			}
+			.red-neon:hover {
+				color: #ff0000;
+				text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+			}
+			.blue-neon {
+				color: #00bfff;
+				text-shadow: 0 0 5px #00bfff;
+			}
+			.blue-neon:hover {
+				color: #00bfff;
+				text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+			}
+			.buttons {
+				margin: 30px 0;
+				text-align: center;
+			}
+		</style>
 	</head>
 	<body>
 		%s
 		<div class="buttons">
-			<a href="/hello" class="button green">Привет</a>
-			<a href="/bye" class="button red">Пока</a>
-			<a href="/refresh" class="button blue">Опять</a>
+			<a href="/hello" class="neon-link green-neon">Привет</a>
+			<a href="/bye" class="neon-link red-neon">Пока</a>
+			<a href="/refresh" class="neon-link blue-neon">Опять</a>
 		</div>
 		<img src="/static/image.jpg" alt="Example Image" class="main-image">
 		<div class="pod-info">
