@@ -149,6 +149,11 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
                 opacity: 0;
                 transition: opacity 1s;
                 z-index: 100;
+                cursor: pointer;
+                text-decoration: none;
+            }
+            .bye-message:hover {
+                color: #00BFFF;
             }
             .rectangle-container {
                 position: relative;
@@ -165,7 +170,7 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
         </style>
     </head>
     <body class="bye-page">
-        <div class="bye-message">Пока!</div>
+        <a href="/" class="bye-message">Пока!</a>
         <div class="rectangle-container" id="container"></div>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
