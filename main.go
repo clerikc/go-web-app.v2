@@ -183,26 +183,30 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
         <link rel="stylesheet" href="/static/styles.css">
         <style>
             .bye-page {
-                background-color: black;
+                background-color: #111;
                 margin: 0;
                 height: 100vh;
                 overflow: hidden;
+                font-family: Arial, sans-serif;
             }
             .bye-message {
                 position: absolute;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                color: white;
+                color: #00BFFF;
                 font-size: 3em;
                 opacity: 0;
-                transition: opacity 1s;
+                transition: all 0.5s ease;
                 z-index: 100;
                 cursor: pointer;
                 text-decoration: none;
+                text-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+                font-weight: bold;
             }
             .bye-message:hover {
-                color: #00BFFF;
+                text-shadow: 0 0 15px #00BFFF, 0 0 30px rgba(0, 191, 255, 0.5);
+                transform: translate(-50%, -50%) scale(1.1);
             }
             .rectangle-container {
                 position: relative;
@@ -211,10 +215,16 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
             }
             .bye-rectangle {
                 position: absolute;
-                width: 30px;
-                height: 60px;
-                background-color: #00BFFF;
+                width: 20px;
+                height: 40px;
+                background-color: rgba(0, 191, 255, 0.5);
+                border-radius: 4px;
                 opacity: 0.8;
+                transition: all 0.3s ease;
+                transform-origin: center;
+            }
+            .bye-rectangle:hover {
+                background-color: rgba(0, 191, 255, 0.8);
             }
         </style>
     </head>
@@ -224,9 +234,13 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const container = document.getElementById('container');
-                const rectCount = 20;
+                const rectCount = 40;
                 const rects = [];
                 const message = document.querySelector('.bye-message');
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+                const radius = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                let angle = 0;
                 
                 // Показываем сообщение через 2 секунды
                 setTimeout(function() {
@@ -234,133 +248,54 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
                 }, 2000);
                 
                 function createRectangles() {
-                    for (var i = 0; i < rectCount; i++) {
-                        // Левые прямоугольники
-                        var leftRect = document.createElement('div');
-                        leftRect.className = 'bye-rectangle';
-                        leftRect.style.left = '0';
-                        leftRect.style.top = (i * (window.innerHeight / rectCount)) + 'px';
-                        container.appendChild(leftRect);
-                        rects.push({element: leftRect, isRight: false});
+                    for (let i = 0; i < rectCount; i++) {
+                        // Первая спираль (синяя)
+                        const rect1 = document.createElement('div');
+                        rect1.className = 'bye-rectangle';
+                        rect1.style.backgroundColor = 'rgba(0, 191, 255, 0.6)';
+                        container.appendChild(rect1);
+                        rects.push({element: rect1, spiral: 1, index: i});
                         
-                        // Правые прямоугольники
-                        var rightRect = document.createElement('div');
-                        rightRect.className = 'bye-rectangle';
-                        rightRect.style.right = '0';
-                        rightRect.style.left = 'auto';
-                        rightRect.style.top = (i * (window.innerHeight / rectCount)) + 'px';
-                        container.appendChild(rightRect);
-                        rects.push({element: rightRect, isRight: true});
+                        // Вторая спираль (голубая)
+                        const rect2 = document.createElement('div');
+                        rect2.className = 'bye-rectangle';
+                        rect2.style.backgroundColor = 'rgba(100, 210, 255, 0.6)';
+                        container.appendChild(rect2);
+                        rects.push({element: rect2, spiral: 2, index: i});
                     }
                 }
                 
-                function animateToCenter() {
-                    var centerX = window.innerWidth / 2;
-                    var duration = 2000;
-                    var startTime = performance.now();
+                function updatePositions() {
+                    const time = Date.now() * 0.001;
+                    const speed = 0.5;
                     
-                    function update(time) {
-                        var elapsed = time - startTime;
-                        var progress = Math.min(elapsed / duration, 1);
+                    rects.forEach(rect => {
+                        const spiralAngle = angle + (rect.index / rectCount) * Math.PI * 2;
+                        const spiralOffset = rect.spiral === 1 ? 0 : Math.PI;
+                        const currentAngle = spiralAngle + spiralOffset;
                         
-                        rects.forEach(function(rect, index) {
-                            var rectEl = rect.element;
-                            if (rect.isRight) {
-                                // Для правых прямоугольников
-                                var currentRight = parseInt(rectEl.style.right || 0);
-                                var currentX = window.innerWidth - currentRight - 30;
-                                var targetX = centerX - 15;
-                                var newX = currentX + (targetX - currentX) * progress;
-                                rectEl.style.right = (window.innerWidth - newX - 30) + 'px';
-                                rectEl.style.left = 'auto';
-                            } else {
-                                // Для левых прямоугольников
-                                var currentX = parseInt(rectEl.style.left || 0);
-                                var targetX = centerX - 15;
-                                var newX = currentX + (targetX - currentX) * progress;
-                                rectEl.style.left = newX + 'px';
-                                rectEl.style.right = 'auto';
-                            }
-                            
-                            // Волновой эффект
-                            var delay = index * 50;
-                            if (elapsed >= delay) {
-                                rectEl.style.opacity = 0.8 - (0.7 * ((elapsed - delay) / (duration - delay)));
-                            }
-                        });
+                        // Позиция по спирали
+                        const spiralProgress = (rect.index / rectCount) * 2 * Math.PI;
+                        const x = centerX + Math.cos(currentAngle + time * speed) * radius * (0.5 + 0.5 * Math.sin(spiralProgress));
+                        const y = centerY + Math.sin(currentAngle + time * speed) * radius * (0.5 + 0.5 * Math.sin(spiralProgress));
                         
-                        if (progress < 1) {
-                            requestAnimationFrame(update);
-                        } else {
-                            setTimeout(animateToOppositeSide, 500);
-                        }
-                    }
-                    
-                    requestAnimationFrame(update);
-                }
-                
-                function animateToOppositeSide() {
-                    var duration = 2000;
-                    var startTime = performance.now();
-                    
-                    function update(time) {
-                        var elapsed = time - startTime;
-                        var progress = Math.min(elapsed / duration, 1);
+                        // Размер и поворот
+                        const scale = 0.5 + 0.5 * Math.sin(time * 0.5 + rect.index * 0.1);
+                        const rotation = currentAngle * (180 / Math.PI);
                         
-                        rects.forEach(function(rect, index) {
-                            var rectEl = rect.element;
-                            if (rect.isRight) {
-                                // Для правых прямоугольников
-                                var currentRight = parseInt(rectEl.style.right || 0);
-                                var currentX = window.innerWidth - currentRight - 30;
-                                var targetX = -30;
-                                var newX = currentX + (targetX - currentX) * progress;
-                                rectEl.style.right = (window.innerWidth - newX - 30) + 'px';
-                                rectEl.style.left = 'auto';
-                            } else {
-                                // Для левых прямоугольников
-                                var currentX = parseInt(rectEl.style.left || 0);
-                                var targetX = window.innerWidth;
-                                var newX = currentX + (targetX - currentX) * progress;
-                                rectEl.style.left = newX + 'px';
-                                rectEl.style.right = 'auto';
-                            }
-                            
-                            // Возвращаем прозрачность
-                            var delay = index * 50;
-                            if (elapsed >= delay) {
-                                rectEl.style.opacity = 0.1 + (0.7 * ((elapsed - delay) / (duration - delay)));
-                            }
-                        });
-                        
-                        if (progress < 1) {
-                            requestAnimationFrame(update);
-                        } else {
-                            resetRectangles();
-                            setTimeout(startAnimation, 1000);
-                        }
-                    }
-                    
-                    requestAnimationFrame(update);
-                }
-                
-                function resetRectangles() {
-                    rects.forEach(function(rect, index) {
-                        var rectEl = rect.element;
-                        if (rect.isRight) {
-                            rectEl.style.right = '0';
-                            rectEl.style.left = 'auto';
-                        } else {
-                            rectEl.style.left = '0';
-                            rectEl.style.right = 'auto';
-                        }
-                        rectEl.style.top = (Math.floor(index/2) * (window.innerHeight / rectCount)) + 'px';
-                        rectEl.style.opacity = '0.8';
+                        rect.element.style.left = x + 'px';
+                        rect.element.style.top = y + 'px';
+                        rect.element.style.transform = 'rotate(' + rotation + 'deg) scale(' + scale + ')';
+                        rect.element.style.opacity = 0.5 + 0.4 * Math.sin(time + rect.index * 0.2);
+                        rect.element.style.zIndex = Math.floor(scale * 100);
                     });
+                    
+                    angle += 0.005;
+                    requestAnimationFrame(updatePositions);
                 }
                 
                 function startAnimation() {
-                    animateToCenter();
+                    updatePositions();
                 }
                 
                 // Инициализация
