@@ -53,7 +53,7 @@ func getLinkHTML(show bool) string {
 	if !show {
 		return ""
 	}
-	return `<a href="https://example.com" class="special-link">Секретная ссылка!</a>`
+	return `<a href="https://github.com/clerikc/go-web-app.v2" class="special-link">Секретная ссылка!</a>`
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
