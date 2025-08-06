@@ -417,13 +417,28 @@ func snakeHandler(w http.ResponseWriter, r *http.Request) {
 			const gridSize = 20;
 			const tileCount = canvas.width / gridSize;
 			
-			let snake = [{x: 10, y: 10}];
-			let food = {x: 5, y: 5};
+			let snake = [];
+			let food = {};
 			let direction = {x: 0, y: 0};
+			let nextDirection = {x: 0, y: 0};
 			let score = 0;
-			let gameSpeed = 150; // ms
+			let gameSpeed = 150;
 			let gameLoop;
-			let gameRunning = true;
+			let gameRunning = false;
+			
+			function initGame() {
+				snake = [
+					{x: 10, y: 10},
+					{x: 9, y: 10},
+					{x: 8, y: 10}
+				];
+				generateFood();
+				direction = {x: 1, y: 0};
+				nextDirection = {x: 1, y: 0};
+				score = 0;
+				scoreElement.textContent = score;
+				gameRunning = true;
+			}
 			
 			function drawTile(x, y, color) {
 				ctx.fillStyle = color;
@@ -463,6 +478,9 @@ func snakeHandler(w http.ResponseWriter, r *http.Request) {
 			
 			function updateGame() {
 				if (!gameRunning) return;
+				
+				// Обновляем направление
+				direction = {...nextDirection};
 				
 				// Двигаем змейку
 				const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
@@ -505,12 +523,17 @@ func snakeHandler(w http.ResponseWriter, r *http.Request) {
 			
 			function generateFood() {
 				// Генерируем еду в случайном месте, но не на змейке
+				let foodPosition;
 				do {
-					food = {
+					foodPosition = {
 						x: Math.floor(Math.random() * tileCount),
 						y: Math.floor(Math.random() * tileCount)
 					};
-				} while (snake.some(segment => segment.x === food.x && segment.y === food.y));
+				} while (snake.some(segment => 
+					segment.x === foodPosition.x && segment.y === foodPosition.y
+				));
+				
+				food = foodPosition;
 			}
 			
 			function gameOver() {
@@ -526,48 +549,42 @@ func snakeHandler(w http.ResponseWriter, r *http.Request) {
 				ctx.fillText('Счёт: ' + score, canvas.width/2, canvas.height/2 + 20);
 			}
 			
-			function resetGame() {
-				snake = [{x: 10, y: 10}];
-				direction = {x: 0, y: 0};
-				score = 0;
-				scoreElement.textContent = score;
-				gameSpeed = 150;
-				gameRunning = true;
-				generateFood();
-				drawGame();
+			function startGame() {
+				initGame();
 				if (gameLoop) clearInterval(gameLoop);
 				gameLoop = setInterval(updateGame, gameSpeed);
+				drawGame();
 			}
 			
 			// Обработка клавиш
 			document.addEventListener('keydown', e => {
+				if (!gameRunning && e.key === ' ') {
+					startGame();
+					return;
+				}
+				
 				// Не позволяем змейке развернуться на 180 градусов
 				switch(e.key) {
 					case 'ArrowUp':
-						if (direction.y === 0) direction = {x: 0, y: -1};
+						if (direction.y === 0) nextDirection = {x: 0, y: -1};
 						break;
 					case 'ArrowDown':
-						if (direction.y === 0) direction = {x: 0, y: 1};
+						if (direction.y === 0) nextDirection = {x: 0, y: 1};
 						break;
 					case 'ArrowLeft':
-						if (direction.x === 0) direction = {x: -1, y: 0};
+						if (direction.x === 0) nextDirection = {x: -1, y: 0};
 						break;
 					case 'ArrowRight':
-						if (direction.x === 0) direction = {x: 1, y: 0};
-						break;
-					case ' ':
-						if (!gameRunning) resetGame();
+						if (direction.x === 0) nextDirection = {x: 1, y: 0};
 						break;
 				}
 			});
 			
 			// Кнопка "Начать заново"
-			restartBtn.addEventListener('click', resetGame);
+			restartBtn.addEventListener('click', startGame);
 			
 			// Начало игры
-			generateFood();
-			drawGame();
-			gameLoop = setInterval(updateGame, gameSpeed);
+			startGame();
 		</script>
 	</body>
 	</html>
