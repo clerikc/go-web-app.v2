@@ -138,16 +138,3 @@ jobs:
           kubectl get svc grafana-service -n monitoring
         "
     
-    - name: Configure Grafana
-      run: |
-        # Получаем адрес Grafana и добавляем дашборды
-        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_IP }} "
-          # Устанавливаем jq для обработки JSON
-          sudo apt-get update && sudo apt-get install -y jq
-          
-          # Получаем внешний IP Grafana
-          GRAFANA_IP=\$(kubectl get svc grafana-service -n monitoring -o json | jq -r '.status.loadBalancer.ingress[0].ip')
-          echo \"Grafana доступна по адресу: http://\$GRAFANA_IP:80\"
-          
-          # Импортируем дашборды (пример)
-          # Это можно сделать через API Grafana или ConfigMap
