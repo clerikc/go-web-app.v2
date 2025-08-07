@@ -232,6 +232,8 @@ spec:
   selector:
     app: grafana
   ports:
-    - port: 8485
+    - protocol: TCP
+      port: 8485
       targetPort: 3000
-  type: LoadBalancer
+      nodePort: 31086
+  type: NodePort
