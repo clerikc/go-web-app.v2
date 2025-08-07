@@ -98,7 +98,6 @@ jobs:
           kubectl get pods
         "
   deploy-monitoring:
-    needs: deploy-app
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
