@@ -55,3 +55,5 @@ spec:
           requests:
             memory: "128Mi"
             cpu: "250m"
+  spec:
+  serviceAccountName: prometheus
