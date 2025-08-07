@@ -97,3 +97,58 @@ jobs:
           echo 'Pods:'
           kubectl get pods
         "
+  deploy-monitoring:
+    needs: deploy-app
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan ${{ secrets.VM_IP }} >> ~/.ssh/known_hosts
+    
+    - name: Deploy monitoring stack
+      run: |
+        # Копируем конфиги мониторинга на сервер
+        scp ./k8s/prometheus.yaml ${{ secrets.VM_USER }}@${{ secrets.VM_IP }}:/tmp/
+        
+        # Применяем конфигурации мониторинга
+        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_IP }} "
+          # Создаем namespace если не существует
+          kubectl create namespace monitoring || true
+          
+          # Применяем конфиги Prometheus
+          kubectl apply -f /tmp/prometheus.yaml -n monitoring
+          
+          # Ждем пока поды поднимутся
+          kubectl wait --for=condition=ready pod -l app=prometheus -n monitoring --timeout=300s
+          kubectl wait --for=condition=ready pod -l app=grafana -n monitoring --timeout=300s
+        "
+    
+    - name: Verify monitoring deployment
+      run: |
+        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_IP }} "
+          echo 'Monitoring Pods:'
+          kubectl get pods -n monitoring
+          echo 'Prometheus Service:'
+          kubectl get svc prometheus-service -n monitoring
+          echo 'Grafana Service:'
+          kubectl get svc grafana-service -n monitoring
+        "
+    
+    - name: Configure Grafana
+      run: |
+        # Получаем адрес Grafana и добавляем дашборды
+        ssh ${{ secrets.VM_USER }}@${{ secrets.VM_IP }} "
+          # Устанавливаем jq для обработки JSON
+          sudo apt-get update && sudo apt-get install -y jq
+          
+          # Получаем внешний IP Grafana
+          GRAFANA_IP=\$(kubectl get svc grafana-service -n monitoring -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+          echo \"Grafana доступна по адресу: http://\$GRAFANA_IP:80\"
+          
+          # Импортируем дашборды (пример)
+          # Это можно сделать через API Grafana или ConfigMap
