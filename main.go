@@ -18,7 +18,7 @@ func main() {
 	http.HandleFunc("/hello", helloHandler)
 	http.HandleFunc("/bye", byeHandler)
 	http.HandleFunc("/refresh", refreshHandler)
-	http.HandleFunc("/snake", snakeHandler) // Добавляем новый маршрут для игры
+	http.HandleFunc("/snake", snakeHandler) 
 
 	// Server config
 	port := os.Getenv("PORT")
